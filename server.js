@@ -1,7 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt-nodejs');
+const knex = require('knex');
 const cors = require('cors');
 const app = express();
+const signin = require('./controlers/signin');
+const register = require('./controlers/register');
+const profile = require('./controlers/profile');
+const deleteRecord = require('./controlers/delete');
+
+const db = knex({
+    client: 'pg',
+    connection: {
+        host : '127.0.0.1',
+        user : 'susan',
+        password : 'test',
+        database : 'farmer'
+    }
+});
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -32,7 +48,7 @@ let database = {
             area: '12.5',
             soil: 'black',
             soilclass: '2',
-            userid: '123'
+            userid: '1'
         },
         {
             id: '2',
@@ -48,7 +64,7 @@ let database = {
             area: '4',
             soil: 'brown',
             soilclass: '1',
-            userid: '123'
+            userid: '1'
         },
         {
             id: '4',
@@ -65,37 +81,10 @@ app.get('/', (req, res) => {
     res.send(database);
 })
 
-app.post('/signin', (req, res) => {
-    database.users.forEach(user => {
-        if (req.body.email === user.email && 
-        req.body.password === user.password) {
-            return res.json(user);
-        }
-    })
-    res.json(400).json('error logging in');
-})
-
-app.post('/register', (req, res) => {
-    const { email, name } = req.body;
-    database.users.push({
-        id: '125',
-        name: name,
-        email: email,
-        entries: 0,
-        joined: new Date()
-    })
-    res.json(database.users[database.users.length-1]);
-})
-
-app.get('/profile/:id', (req, res) => {
-    const { id } = req.params;
-    database.users.forEach(user => {
-        if (user.id === id) {
-            return res.json(user);
-        }
-    })
-    res.status(400).json('not found');
-})
+app.post('/signin', signin.handleSignin(db,bcrypt));
+app.post('/register', register.handleRegister(db,bcrypt));
+app.get('/profile/:id', profile.handleProfile(db));
+//app.delete('/field/:id', deleteRecord.handleDelete());
 
 app.delete('/field/:id', (req,res) => {
     let i = 0;
@@ -121,7 +110,6 @@ app.post('/data', (req, res) => {
             number++;
         }
     })
-    console.log(data);
     if(data !== -1){
         return res.json(data);
     }

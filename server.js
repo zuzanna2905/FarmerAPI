@@ -6,7 +6,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-const database = {
+let database = {
     users: [
         {
             id: '123',
@@ -97,6 +97,20 @@ app.get('/profile/:id', (req, res) => {
     res.status(400).json('not found');
 })
 
+app.delete('/field/:id', (req,res) => {
+    let i = 0;
+    database.fields.forEach(field => {
+        if (field.id === req.params.id) {
+            i = database.fields.indexOf(field);
+            database.fields.splice(i,1);
+            return res.json({ message: 'ok' });
+        }
+    }), function (err) {
+        if (err) return res.send(err);
+    }
+    res.json({ message: 'no data' });
+})
+
 app.post('/data', (req, res) => {
     let data = [];
     let number = 0;
@@ -107,7 +121,8 @@ app.post('/data', (req, res) => {
             number++;
         }
     })
-    if(data.length > 0){
+    console.log(data);
+    if(data !== -1){
         return res.json(data);
     }
     res.status(400).json('not found');
@@ -126,6 +141,6 @@ app.post('/newfield', (req,res) => {
     res.json(database.fields[database.fields.length-1]);
 })
 
-app.listen(3000, ()=>{
-    console.log('app is running on port 3000');
+app.listen(3001 || process.env.PORT, ()=>{
+    console.log(`app is running on port  ${process.env.PORT}`);
 })

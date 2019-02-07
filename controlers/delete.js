@@ -1,17 +1,14 @@
 const handleDelete = (db) => (req, res) => {
-    let i = 0;
-    database.fields.forEach(field => {
-        if (field.id === req.params.id) {
-            i = database.fields.indexOf(field);
-            database.fields.splice(i,1);
-            return res.json({ message: 'ok' });
-        }
-    }), function (err) {
-        if (err) return res.send(err);
-    }
-    res.json({ message: 'no data' });
+    const { userid } = req.body;
+    db('fields')
+    .del()
+    .where({
+        id : req.params.id,
+        userid : userid
+    })
+    .then(res.json({ message: 'ok' }))
+    .catch(err => res.status(400).json(err))
 }
-
 
 module.exports = {
     handleDelete: handleDelete

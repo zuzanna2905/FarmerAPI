@@ -1,9 +1,9 @@
 # FarmerAPI
-Idea
+Idea:
 Farmer app's server
 
-Technologies
+Technologies:
 JavaScript, NodeJS, ExpressJS, REST
 
-Run 
+Run :
 npm start

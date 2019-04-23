@@ -27,9 +27,9 @@ app.use(cors());
 app.post('/signin', signin.handleSignin(db,bcrypt));
 app.post('/register', register.handleRegister(db,bcrypt));
 app.get('/profile/:id', profile.handleProfile(db));
-app.post('/data', data.handleData(db));
-app.post('/newfield', field.handleNewField(db));
-app.delete('/field/:id', deleteRecord.handleDelete(db));
+app.post('/fields', data.handleData(db));
+app.post('/fields', field.handleNewField(db));
+app.delete('/fields/:id', deleteRecord.handleDelete(db));
 
 app.listen(3001 || process.env.PORT, ()=>{
     console.log(`app is running on port  ${process.env.PORT}`);
